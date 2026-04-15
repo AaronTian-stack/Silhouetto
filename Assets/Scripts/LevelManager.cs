@@ -9,6 +9,8 @@ using UnityEditor;
 
 public class LevelManager : MonoBehaviour
 {
+    public static int Score = 0;
+    
     [Header("Puzzle Library")]
     [SerializeField] private string puzzlesFolderPath = "Assets/Puzzles";
     [SerializeField] private List<PuzzleObjectScript> availablePuzzles = new();
@@ -49,6 +51,7 @@ public class LevelManager : MonoBehaviour
             if (!isTransitioning)
             {
                 // TODO: Split based off current score and easy, medium, hard puzzles
+                ++Score;
                 int index = Random.Range(0, availablePuzzles.Count);
                 LoadPuzzle(index);
             }
