@@ -10,16 +10,21 @@ using UnityEditor;
 public class LevelManager : MonoBehaviour
 {
     public static int Score = 0;
-    
+
     [Header("Puzzle Library")]
     [SerializeField] private string puzzlesFolderPath = "Assets/Puzzles";
     [SerializeField] private List<PuzzleObjectScript> availablePuzzles = new();
-    
+
     private BoxCollider spawnArea;
     [SerializeField, Min(0.001f)] private float spawnPadding = 0.45f;
 
     [Header("Transitions")]
     [SerializeField] private float clearAnimationDuration = 0.25f;
+
+    [Header("Connections")]
+    [SerializeField] private GameObject projectionBackground;
+    [SerializeField] private string backgroundTextureProperty = "_MainTexture";
+    [SerializeField] private ShadowScorer shadowScorer;
 
     private readonly List<GameObject> spawnedObjects = new();
     private int currentPuzzleIndex = -1;
@@ -57,6 +62,13 @@ public class LevelManager : MonoBehaviour
             }
         }
         // TODO: Check if puzzle is solved and then load next puzzle
+    }
+
+    public void LoadNextPuzzle()
+    {
+        ++Score;
+        int index = Random.Range(0, availablePuzzles.Count);
+        LoadPuzzle(index);
     }
 
     private void LoadPuzzle(int puzzleIndex)
@@ -159,6 +171,10 @@ public class LevelManager : MonoBehaviour
             var spawnedObject = Instantiate(puzzleObject, origin + worldOffset, rotation, spawnAreaTransform);
             spawnedObjects.Add(spawnedObject);
         }
+
+
+        shadowScorer.targetSilhouette = puzzle.outlineTexture;
+        projectionBackground.GetComponent<MeshRenderer>().material.SetTexture(backgroundTextureProperty, puzzle.outlineTexture);
     }
 
     private static Vector3 GetGridOffset(int index, int gridColumns, int gridRows, float spacing)
@@ -193,7 +209,7 @@ public class LevelManager : MonoBehaviour
         {
             return;
         }
-        
+
         if (spawnArea == null)
         {
             return;

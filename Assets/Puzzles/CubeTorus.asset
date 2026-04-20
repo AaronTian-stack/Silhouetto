@@ -10,8 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4f1fe0925b564dbda42003485a09544, type: 3}
-  m_Name: SingleCube
+  m_Name: CubeTorus
   m_EditorClassIdentifier: Assembly-CSharp::PuzzleObjectScript
-  outlineTexture: {fileID: 2800000, guid: fa1c7d640a918b54fb9543b4a307e9a3, type: 3}
+  outlineTexture: {fileID: 2800000, guid: b0a466c19ecb5cd4bb2ed22521020a8e, type: 3}
   puzzleObjects:
   - {fileID: 6640387835271095783, guid: 659e84aa6b9434a9498c88c8b190c991, type: 3}
+  - {fileID: 1937504400232198620, guid: 6c26f787d17ec439ea43b24732889a7a, type: 3}
