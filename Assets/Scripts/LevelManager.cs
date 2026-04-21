@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -10,6 +11,9 @@ using UnityEditor;
 public class LevelManager : MonoBehaviour
 {
     public static int Score = 0;
+
+    public static float RemainingTimeSeconds;
+    public static bool IsGameOver => RemainingTimeSeconds <= 0;
 
     [Header("Puzzle Library")]
     [SerializeField] private string puzzlesFolderPath = "Assets/Puzzles";
@@ -27,6 +31,13 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private GameObject projectionBackground;
     [SerializeField] private string backgroundTextureProperty = "_MainTexture";
     [SerializeField] private ShadowScorer shadowScorer;
+
+    [Header("Timer")]
+    [SerializeField, Min(1f)] private float initialTime = 90f;
+    [SerializeField] private GameObject gameOverPanel;
+
+    [Header("UI")]
+    [SerializeField] private TimeBonusPopup timeBonusPopup;
 
     private readonly List<GameObject> spawnedObjects = new();
     private int currentPuzzleIndex = -1;
@@ -46,41 +57,58 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
+        RemainingTimeSeconds = initialTime;
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(false);
+        }
+
         // TODO: Load tutorial
         LoadPuzzle(0);
     }
 
     private void Update()
     {
+        if (!IsGameOver)
+        {
+            RemainingTimeSeconds -= Time.deltaTime;
+            if (RemainingTimeSeconds <= 0f)
+            {
+                RemainingTimeSeconds = 0f;
+                TriggerGameOver();
+            }
+        }
+
         // TODO: Remove this
         if (Keyboard.current != null && Keyboard.current.nKey.wasPressedThisFrame)
         {
-            if (!isTransitioning)
-            {
-                // TODO: Split based off current score and easy, medium, hard puzzles
-                LoadNextPuzzle();
-            }
+            // TODO: Split based off current score and easy, medium, hard puzzles
+            LoadNextPuzzle();
         }
         // TODO: Check if puzzle is solved and then load next puzzle
     }
 
     public void LoadNextPuzzle()
-    {        
+    {
+        if (IsGameOver || isTransitioning)
+        {
+            return;
+        }
+
         clearParticles.Play();
         clearAudio.Play();
         
         ++Score;
+        float timeBonus = availablePuzzles[currentPuzzleIndex].timeBonusSeconds;
+        RemainingTimeSeconds += timeBonus;
+        timeBonusPopup.Show(timeBonus);
+
         int index = Random.Range(0, availablePuzzles.Count);
         LoadPuzzle(index);
     }
 
     private void LoadPuzzle(int puzzleIndex)
     {
-        if (availablePuzzles.Count == 0 || puzzleIndex < 0 || puzzleIndex >= availablePuzzles.Count || isTransitioning)
-        {
-            return;
-        }
-
         if (transitionRoutine != null)
         {
             StopCoroutine(transitionRoutine);
@@ -178,6 +206,16 @@ public class LevelManager : MonoBehaviour
 
         shadowScorer.targetSilhouette = puzzle.outlineTexture;
         projectionBackground.GetComponent<MeshRenderer>().material.SetTexture(backgroundTextureProperty, puzzle.outlineTexture);
+    }
+
+    private void TriggerGameOver()
+    {
+        gameOverPanel.SetActive(true);
+    }
+
+    public void PlayAgain()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private static Vector3 GetGridOffset(int index, int gridColumns, int gridRows, float spacing)
