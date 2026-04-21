@@ -20,6 +20,8 @@ public class LevelManager : MonoBehaviour
 
     [Header("Transitions")]
     [SerializeField] private float clearAnimationDuration = 0.25f;
+    [SerializeField] private ParticleSystem clearParticles;
+    [SerializeField] private AudioSource clearAudio;
 
     [Header("Connections")]
     [SerializeField] private GameObject projectionBackground;
@@ -56,16 +58,17 @@ public class LevelManager : MonoBehaviour
             if (!isTransitioning)
             {
                 // TODO: Split based off current score and easy, medium, hard puzzles
-                ++Score;
-                int index = Random.Range(0, availablePuzzles.Count);
-                LoadPuzzle(index);
+                LoadNextPuzzle();
             }
         }
         // TODO: Check if puzzle is solved and then load next puzzle
     }
 
     public void LoadNextPuzzle()
-    {
+    {        
+        clearParticles.Play();
+        clearAudio.Play();
+        
         ++Score;
         int index = Random.Range(0, availablePuzzles.Count);
         LoadPuzzle(index);
