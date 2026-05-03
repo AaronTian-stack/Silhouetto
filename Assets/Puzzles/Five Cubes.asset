@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4f1fe0925b564dbda42003485a09544, type: 3}
   m_Name: Five Cubes
   m_EditorClassIdentifier: Assembly-CSharp::PuzzleObjectScript
-  outlineTexture: {fileID: 2800000, guid: fa1c7d640a918b54fb9543b4a307e9a3, type: 3}
+  outlineTexture: {fileID: 2800000, guid: 62e0d017a0ef38847ad2e0c8cdaf8a2e, type: 3}
   timeBonusSeconds: 10
   puzzleObjects:
   - {fileID: 6640387835271095783, guid: d4304550be25b2d429aaa217fd2265b3, type: 3}
