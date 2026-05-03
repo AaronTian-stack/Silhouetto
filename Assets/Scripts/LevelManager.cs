@@ -31,6 +31,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private GameObject projectionBackground;
     [SerializeField] private string backgroundTextureProperty = "_MainTexture";
     [SerializeField] private ShadowScorer shadowScorer;
+    [SerializeField] private SceneFadeTransition sceneFadeTransition;
 
     [Header("Timer")]
     [SerializeField, Min(1f)] private float initialTime = 90f;
@@ -215,6 +216,12 @@ public class LevelManager : MonoBehaviour
 
     public void PlayAgain()
     {
+        if (sceneFadeTransition != null)
+        {
+            sceneFadeTransition.LoadSceneWithFade(SceneManager.GetActiveScene().buildIndex);
+            return;
+        }
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
